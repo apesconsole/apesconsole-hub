@@ -1,0 +1,9 @@
+welcome:
+  message: Ape's Console
+  
+platform:
+  default: LOCAL
+
+# HTTP Server
+server:
+  port: 3006   # HTTP (Tomcat) port
