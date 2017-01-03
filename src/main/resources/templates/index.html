@@ -11,9 +11,24 @@
 				<span th:text="'Platform: ' + ${platform}"></span>
 			</h2>
 			<ul>
-				<li><a href="/pub">PUB Message</a></li>
+				<li><a href="/pub" class="btn btn-success" role="button">Publish</a></li>
 			</ul>
 		</div>
+	</div>
+	<div class="container">
+		<h1>Message Log</h1>
+		 <table class="table">
+		 	<tr>
+		 		<th>Id</th>
+		 		<th>Message</th>
+		 		<th>Time Stamp</th>
+		 	</tr>
+		 	<tr  th:each="data,itrStat : ${log_data}">
+		 		<td th:text="${data.id}">001</td>
+		 		<td th:text="${data.message}">message</td>
+		 		<td th:text="${data.log_time}">123</td>
+		 	</tr>
+		 </table>
 	</div>
 	<!-- /.container -->
 	<div th:replace="footer :: copy"></div>

@@ -37,6 +37,15 @@
 	      <groupId>org.springframework.integration</groupId>
 	      <artifactId>spring-integration-mqtt</artifactId>
 	    </dependency>
+	    <!-- Database -->
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-jdbc</artifactId>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.hsqldb</groupId>
+	      <artifactId>hsqldb</artifactId>
+	    </dependency>	    
 		<!-- hot swapping, disable cache for template, enable live reload -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

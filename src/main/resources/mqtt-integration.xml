@@ -1,16 +1,23 @@
 <beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:jdbc="http://www.springframework.org/schema/jdbc"
              xmlns="http://www.springframework.org/schema/integration"
              xmlns:int-mqtt="http://www.springframework.org/schema/integration/mqtt"
              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                                 http://www.springframework.org/schema/integration/mqtt http://www.springframework.org/schema/integration/mqtt/spring-integration-mqtt.xsd
-                                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+            	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+                http://www.springframework.org/schema/integration/mqtt http://www.springframework.org/schema/integration/mqtt/spring-integration-mqtt.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
 
 
     <!-- Component scan to find all Spring components -->
     <context:component-scan base-package="com.apesconsole" />
+    
+    <beans:bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<beans:property name="dataSource" ref="dataSource" />
+	</beans:bean>
+    
 	<beans:bean id="apesConverter" class="org.springframework.integration.mqtt.support.DefaultPahoMessageConverter" />
 	<beans:bean id="pubFactory" class="org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory" >
 		<beans:property name="userName" value="MONITOR_HUB"/>
@@ -50,5 +57,10 @@
 			channel="fromMQTT" />	
 			
 	<service-activator input-channel="fromMQTT" ref="mqttSubscriber" method="handleMessage" />
+	
+	<!-- in-memory database -->
+	<jdbc:embedded-database id="dataSource">
+		<jdbc:script location="classpath:db/schemas/schema.sql" />
+	</jdbc:embedded-database>
 	
 </beans:beans>
