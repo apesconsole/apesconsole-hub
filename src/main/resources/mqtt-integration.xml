@@ -1,0 +1,54 @@
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns="http://www.springframework.org/schema/integration"
+             xmlns:int-mqtt="http://www.springframework.org/schema/integration/mqtt"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                                 http://www.springframework.org/schema/integration/mqtt http://www.springframework.org/schema/integration/mqtt/spring-integration-mqtt.xsd
+                                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+
+    <!-- Component scan to find all Spring components -->
+    <context:component-scan base-package="com.apesconsole" />
+	<beans:bean id="apesConverter" class="org.springframework.integration.mqtt.support.DefaultPahoMessageConverter" />
+	<beans:bean id="pubFactory" class="org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory" >
+		<beans:property name="userName" value="MONITOR_HUB"/>
+		<beans:property name="password" value="0987654321"/>
+	</beans:bean>
+	
+	<beans:bean id="subFactory" class="org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory" >
+		<beans:property name="userName" value="MONITOR_HUB"/>
+		<beans:property name="password" value="0987654321"/>
+	</beans:bean>
+	
+	<beans:bean id="mqttSubscriber" class="com.apesconsole.integration.impl.MQTTSubscriberImpl">
+	</beans:bean>
+	
+    <!-- A Spring Integration channel -->
+    <channel id="toMQTT"/>
+    <channel id="fromMQTT"/>
+    
+	<int-mqtt:outbound-channel-adapter id="mqttOuputChannel"
+			client-id="TEST_Publisher"
+			url="tcp://m13.cloudmqtt.com:18422"
+			auto-startup="true"
+			default-retained="true"
+			default-topic="T_SENSOR_IN"
+			client-factory="pubFactory"
+			async="true"
+			async-events="true"
+			channel="toMQTT"/>
+			
+	<int-mqtt:message-driven-channel-adapter id="mqttInputChannel"
+			client-id="TEST_Subscriber"
+			url="tcp://m13.cloudmqtt.com:18422"
+			client-factory="subFactory"
+			auto-startup="true"
+			converter="apesConverter"
+			topics="T_SENSOR_IN"
+			channel="fromMQTT" />	
+			
+	<service-activator input-channel="fromMQTT" ref="mqttSubscriber" method="handleMessage" />
+	
+</beans:beans>
